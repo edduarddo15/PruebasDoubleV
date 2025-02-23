@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "36bac187-972c-4642-af7d-f663bf4c4b94",
+		"name": "Eliminar Productos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38956006"
+	},
+	"item": [
+		{
+			"name": "Eliminar Productos",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Recuperar los productos a eliminar desde el entorno  \r",
+							"const productsToDelete = JSON.parse(pm.environment.get(\"productsToDelete\"));  \r",
+							"\r",
+							"// Obtener el índice actual del producto que se está eliminando  \r",
+							"const currentIndex = pm.environment.get(\"currentProductIndex\") || 0;  \r",
+							"\r",
+							"if (currentIndex < productsToDelete.length) {  \r",
+							"    // Obtener el ID del producto a eliminar  \r",
+							"    const productToDelete = productsToDelete[currentIndex];  \r",
+							"    pm.request.url = `https://fakestoreapi.com/products/${productToDelete.id}`;  \r",
+							"    pm.environment.set(\"currentProductIndex\", currentIndex + 1); // Incrementar el índice para la próxima ejecución  \r",
+							"} else {  \r",
+							"    // Reiniciar el índice si se han eliminado todos los productos  \r",
+							"    pm.environment.unset(\"currentProductIndex\");  \r",
+							"    postman.setNextRequest(null); // Detener la ejecución si no hay más productos  \r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "https://fakestoreapi.com/products/{{productId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Productos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Definición de la prueba\r",
+							"pm.test(\"Filtrar productos menores a 100\", function () {  \r",
+							"    /// Se convierte la respuesta de la API en un objeto JavaScript.\r",
+							"    const jsonData = pm.response.json();  \r",
+							"    \r",
+							"    // Se filtran los productos con precio menor a 100  \r",
+							"    const productsToDelete = jsonData.filter(product => product.price < 100);  \r",
+							"    \r",
+							"    // Guardar los IDs de los productos filtrados  \r",
+							"    pm.environment.set(\"productsToDelete\", JSON.stringify(productsToDelete));  \r",
+							"    \r",
+							"    // Contar los productos a eliminar  \r",
+							"    console.log(\"Productos a eliminar: \", productsToDelete.length);  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://fakestoreapi.com/products"
+			},
+			"response": []
+		}
+	]
+}

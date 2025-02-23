@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "ac81ee6c-78ab-4775-8769-dd2ac3d3c844",
+		"name": "Consultar Productos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38956006"
+	},
+	"item": [
+		{
+			"name": "Consulta por Categoria",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"// Definición de la prueba\r",
+							"pm.test(\"La respuesta es exitosa\", function () {  \r",
+							"    // Verificamos que la respuesta del servidor tenga un código de estado HTTP 200\r",
+							"    pm.response.to.have.status(200);  \r",
+							"});  \r",
+							"\r",
+							"// Definición de la prueba\r",
+							"pm.test(\"La respuesta es un array\", function () {\r",
+							"    // Convertimos la respuesta del servidor en un objeto JSON  \r",
+							"    var jsonData = pm.response.json();  \r",
+							"    // Verificamos que la respuesta sea un array\r",
+							"    pm.expect(jsonData).to.be.an('array');  \r",
+							"});  \r",
+							"\r",
+							"// Definición de la prueba\r",
+							"pm.test(\"El primer elemento es de la categoría 'electronics'\", function() { \r",
+							"    // Convertimos la respuesta del servidor en un objeto JSON \r",
+							"    var jsonData = pm.response.json();  \r",
+							"    // Se verifica que la categoria del elemento sea electronics\r",
+							"    pm.expect(jsonData[0].category).to.eql('electronics');  \r",
+							"});  "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://fakestoreapi.com/products/category/electronics"
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta por ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Definición de la prueba  \r",
+							"pm.test(\"La respuesta es exitosa\", function () {  \r",
+							"    // Verificamos que la respuesta del servidor tenga un código de estado HTTP 200\r",
+							"    pm.response.to.have.status(200);  \r",
+							"});  \r",
+							"\r",
+							"// Definición de la prueba \r",
+							"pm.test(\"El producto existe\", function () {   \r",
+							"    // Convertimos la respuesta del servidor en un objeto JSON  \r",
+							"    var jsonData = pm.response.json();  \r",
+							"    // Se verifica que el objeto tenga una propiedad llamada \"id\"\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");  \r",
+							"});  \r",
+							"\r",
+							"// Manejar el caso cuando el ID no existe  \r",
+							"// Definición de la prueba \r",
+							"pm.test(\"Manejo de error para ID no existente\", function () {  \r",
+							"    // Se verifica si el código de respuesta de la API es 404\r",
+							"    if (pm.response.code === 404) {\r",
+							"        // Se compara que la respuesta recibida, sea la esperada  \r",
+							"        pm.expect(pm.response.json().message).to.eql(\"Product not found\");  \r",
+							"    }  \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://fakestoreapi.com/products/{{productId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Imagen de Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Definición de la prueba  \r",
+							"pm.test(\"Imagen del producto actualizada correctamente\", function () {  \r",
+							"    // Verificamos que la respuesta del servidor tenga un código de estado HTTP 200\r",
+							"    pm.response.to.have.status(200);  \r",
+							"});  \r",
+							"\r",
+							"// Verifica que la respuesta contenga la nueva imagen  \r",
+							"// Definición de la prueba \r",
+							"pm.test(\"La respuesta contiene la nueva imagen\", function () {  \r",
+							"    // Convertimos la respuesta del servidor en un objeto JSON\r",
+							"    var jsonData = pm.response.json();  \r",
+							"    // Se verifica que el objeto tenga una propiedad image y que el valor de esta propiedad sea en enviado\r",
+							"    pm.expect(jsonData).to.have.property(\"image\").that.includes(\"fakeimg.pl/400/\");  \r",
+							"});  "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{  \r\n    \"title\": \"Nuevo Producto\",  \r\n    \"price\": 13.5,  \r\n    \"description\": \"Descripción del nuevo producto.\",  \r\n    \"image\": \"https://i.pravatar1.cc\",  \r\n    \"category\": \"electronics\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://fakestoreapi.com/products/{{productId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Productos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Definición de la prueba\r",
+							"pm.test(\"Filtrar productos menores a 100\", function () {  \r",
+							"    /// Se convierte la respuesta de la API en un objeto JavaScript.\r",
+							"    const jsonData = pm.response.json();  \r",
+							"    \r",
+							"    // Se filtran los productos con precio menor a 100  \r",
+							"    const productsToDelete = jsonData.filter(product => product.price < 100);  \r",
+							"    \r",
+							"    // Guardar los IDs de los productos filtrados  \r",
+							"    pm.environment.set(\"productsToDelete\", JSON.stringify(productsToDelete));  \r",
+							"    \r",
+							"    // Contar los productos a eliminar  \r",
+							"    console.log(\"Productos a eliminar: \", productsToDelete.length);  \r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://fakestoreapi.com/products"
+			},
+			"response": []
+		}
+	]
+}
